@@ -20,9 +20,14 @@ public class Client {
 	FileStorage fileStorage = new FileStorage();
 	int bootstrapPort;
 	
+	public Client(){
+		//start 'server' thread
+		//start UI
+	}
+	
 	//tells bootstrapper that client has a certain file
-	private void announceFile(String filename){
-		
+	private void announceFile(String filename, String path){
+		fileStorage.put(filename, path);
 		try {
 			InetAddress myAddress = Inet4Address.getLocalHost();
 			Socket bootstrapSock = new Socket(Inet4Address.getByName("bootstrap.se"), bootstrapPort);
@@ -49,9 +54,11 @@ public class Client {
 	}
 	private void downloadFile(String filename){
 		ArrayList<String> peers = getPeers(filename);
+		int fragments = peers.size();
 		for(String peer: peers){
 			//START A THREAD
 			//IN THAT THREAD CONNECT TO peer
+			//ASK peer TO STREAM (FileSize/fragments) BYTES OF FILE
 			//DOWNLOAD 1 FRAGMENT OF FILE FROM PEER
 			//PUT INTO BUFFER
 			//CLOSE CONNECTIONS
