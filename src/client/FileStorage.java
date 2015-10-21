@@ -4,10 +4,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class FileStorage {
 	
-	public FileStorage(){
-		
-	}
-	
 	private ConcurrentHashMap<String,String> files = new ConcurrentHashMap<String,String>();
 
 	public String put(String filename, String path){
@@ -17,7 +13,8 @@ public class FileStorage {
 	public String get(String filename){
 		if(files.containsKey(filename)){
 			return files.get(filename);
-		}else{
+		}
+		else{
 			return "File: "+filename+" was not found in file map.";
 		}
 	}

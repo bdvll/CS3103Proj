@@ -11,7 +11,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-
 public class Client{
 	
 	public static int SERVER_PORT = 33333;
@@ -22,6 +21,7 @@ public class Client{
 	public static void main (String[] args){
 		new Client();
 	}
+	
 	public Client(){
 		System.out.println("CLIENT: Client started");
 		Scanner scan = new Scanner(System.in);
@@ -83,6 +83,7 @@ public class Client{
 			e.printStackTrace();
 		}
 	}
+	
 	private void downloadFile(String filename){
 		String[] peers = getPeers(filename);
 		int fragments = peers.length;
@@ -99,6 +100,7 @@ public class Client{
 		//APPEND ALL BUFFERS
 		//WRITE BUFFER TO FILE 
 	}
+	
 	//Get peers who have the file we want
 	private String[] getPeers(String filename){
 		String[] connectPeers;
@@ -114,11 +116,12 @@ public class Client{
 			input.close();
 			bootstrapSock.close();
 			return connectPeers;
-		} catch (Exception e) {
+		} 
+		catch (Exception e) {
 			System.out.println("CLIENT: Exception in getPeers");
 			e.printStackTrace();
 		}
-	return null;
+		return null;
 	}
 	
 }
