@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import client.FileStorage;
-import client.Server.ConnectionHandler;
+import client.FileDownloader.ConnectionHandler;
 
 public class BootStrapper implements Runnable {
 	public HashMap<FileInfo, ArrayList<String>> bootstrap = new HashMap<FileInfo, ArrayList<String>>();

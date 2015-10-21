@@ -9,11 +9,11 @@ import java.io.RandomAccessFile;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class Server implements Runnable{
+public class FileDownloader implements Runnable{
 
 	public static int SERVER_PORT;
 	private FileStorage fileStorage;
-	public Server(FileStorage fileStorage){
+	public FileDownloader(FileStorage fileStorage){
 		this.fileStorage = fileStorage;
 	}
 	public void run() {
@@ -61,4 +61,3 @@ public class Server implements Runnable{
 		
 	}
 }
-
