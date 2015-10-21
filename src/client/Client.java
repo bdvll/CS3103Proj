@@ -2,6 +2,7 @@ package client;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Inet4Address;
@@ -22,22 +23,32 @@ public class Client{
 		new Client();
 	}
 	public Client(){
+		System.out.println("CLIENT: Client started");
 		Scanner scan = new Scanner(System.in);
-
-		System.out.println("Client running");
-		System.out.println("Announce a file");
-		String filename = scan.nextLine();
-		System.out.println("Specify path");
-		String path= scan.nextLine();
-		announceFile(filename, path);
-		
+		boolean loop = true;
+		while(loop){
+			System.out.println("Do you wish to announce a file to the file sharing system? (Y/N)");
+			String response = scan.nextLine();
+			if(response.equals("N")){
+				loop = false;
+				break;
+			}
+			System.out.println("CLIENT: Announce a file");
+			String filename = scan.nextLine();
+			System.out.println("CLIENT: Specify path");
+			String path= scan.nextLine();
+	
+			announceFile(filename, path);
+		}
 		
 	}
 	
 	//tells bootstrapper that client has a certain file
 	private void announceFile(String filename, String path){
 		
-		System.out.println(fileStorage.put(filename, path));
+		System.out.println(fileStorage.put(filename, path));//PLACEHOLDER. READ FILE AND GET FILESIZE
+		File file = new File(path);
+		long filesize = file.length();
 		
 		try {
 			String myAddress = Inet4Address.getLocalHost().getHostAddress();
@@ -45,30 +56,30 @@ public class Client{
 			System.out.println("Created socket to bootstrapper");
 			PrintWriter output = new PrintWriter(new BufferedOutputStream(bootstrapSock.getOutputStream()));
 			BufferedReader input = new BufferedReader(new InputStreamReader(bootstrapSock.getInputStream()));
-			
-			String test = input.readLine();
-//			System.out.println("msg: "+input.readLine());
-//			while(!(input.readLine().equals("RDY"))){
-//				System.out.println("Waiting for ready");
-//			}
-			output.write("ANC:"+myAddress.toString()+":"+filename+"\n");
+
+			if(!(input.readLine().equals("RDY"))){
+				System.out.println("CLIENT: Ready message from bootstrapper not recieved.");
+			}else{
+				System.out.println("CLIENT: Ready message from bootstrapper recieved");
+			}
+
+			output.write("ANC:"+myAddress.toString()+":"+filename+":"+filesize+"\n");
 			output.flush();
-			System.out.println("wrote 'ANC:"+myAddress.toString()+":"+filename+" to bootstrapper");
+			System.out.println("CLIENT: wrote 'ANC:"+myAddress.toString()+":"+filename+":"+filesize+" to bootstrapper");
 			String response = input.readLine();
-			System.out.println(response);
 			if(response.equals("OK")){
-				System.out.println("Success: Bootstrapper accepted file announcement");
+				System.out.println("CLIENT: Success: Bootstrapper accepted file announcement");
 				output.close();
 				input.close();
 				bootstrapSock.close();
 			}else{
-				System.out.println("Warning: Bootstrapper did not accept file announcement");
+				System.out.println("CLIENT: Warning: Bootstrapper did not accept file announcement");
 				output.close();
 				input.close();
 				bootstrapSock.close();
 			}
 		} catch (Exception e) {
-			System.out.println("Exception in announceFile");
+			System.out.println("CLIENT: Exception in announceFile");
 			e.printStackTrace();
 		}
 	}
@@ -104,7 +115,7 @@ public class Client{
 			bootstrapSock.close();
 			return connectPeers;
 		} catch (Exception e) {
-			System.out.println("Exception in getPeers");
+			System.out.println("CLIENT: Exception in getPeers");
 			e.printStackTrace();
 		}
 	return null;

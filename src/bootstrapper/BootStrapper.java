@@ -15,7 +15,7 @@ import client.FileStorage;
 import client.Server.ConnectionHandler;
 
 public class BootStrapper implements Runnable {
-	public HashMap<String, ArrayList<String>> bootstrap = new HashMap<String, ArrayList<String>>();
+	public HashMap<FileInfo, ArrayList<String>> bootstrap = new HashMap<FileInfo, ArrayList<String>>();
 	public static int SERVER_PORT = 33333;
 	
 	public BootStrapper(){
@@ -28,7 +28,6 @@ public class BootStrapper implements Runnable {
 	}
 	
 	public void run(){
-		System.out.println("BOOTSTRAPPER: IN RUN");
 		ServerSocket serverSocket;
 		try {
 			serverSocket = new ServerSocket(SERVER_PORT);
@@ -61,7 +60,7 @@ public class BootStrapper implements Runnable {
 					System.out.println("BOOTSTRAPPER: Wrote RDY");
 					System.out.println("BOOTSTRAPPER: Waiting for message");
 					String request = input.readLine();
-					System.out.println("message: "+request);
+					System.out.println("BOOTSTRAPPER: message: "+request);
 					if(request.startsWith("GET:")){
 						String[] requestArray = request.split(":");
 						output.write(bootstrap.get(requestArray[1]).toString());
@@ -70,17 +69,21 @@ public class BootStrapper implements Runnable {
 						String[] requestArray = request.split(":");
 						String ip = requestArray[1];
 						String file = requestArray[2];
-						System.out.println("BOOTSTRAPPER: Caught ANC request, adding "+ip+" to list of peers for file "+file);
+						int size = Integer.parseInt(requestArray[3]);
+						System.out.println("BOOTSTRAPPER: Caught ANC request, adding "+ip+" to list of peers for file "+file+" size: "+size+" bytes");
 						if(!(bootstrap.containsKey(file))){
 							ArrayList<String> peerList = new ArrayList<String>();
 							peerList.add(ip);
-							bootstrap.put(file,peerList);
+							FileInfo newFile = new FileInfo(file, size);
+							bootstrap.put(newFile,peerList);
 						}else{
 						ArrayList<String> peers = bootstrap.get(file);
 						peers.add(ip);
 						}
 					}
+					System.out.println("BOOTSTRAPPER: Sending ACK for file announcement");
 					output.write("OK\n");
+					output.flush();
 					System.out.println(bootstrap.toString());
 				} catch (IOException e) {
 					e.printStackTrace();
